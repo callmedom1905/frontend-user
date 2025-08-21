@@ -9,8 +9,8 @@ interface Post {
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://yourdomain.com'
-  const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000'
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://moobeefsteak.online'
+  const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://moobeefsteak.online'
 
   // Static pages
   const staticPages: MetadataRoute.Sitemap = [

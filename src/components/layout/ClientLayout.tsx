@@ -17,7 +17,7 @@ export default function ClientLayout({
 
   useEffect(() => {
     if (!csrfCalled.current) {
-      const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
+      const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://moobeefsteak.online';
       fetch(`${apiBaseUrl}/api/csrf-token`, {
         credentials: "include"
       });

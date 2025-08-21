@@ -58,7 +58,7 @@ interface PageProps {
 async function fetchPost(slug: string): Promise<Post> {
   try {
     const res = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000"}/api/user/posts/${slug}`
+      `${process.env.NEXT_PUBLIC_API_BASE_URL || "https://moobeefsteak.online"}/api/user/posts/${slug}`
     );
     
     const post: Post = res.data.data;
@@ -152,7 +152,7 @@ export default async function PostDetail({ params }: PageProps) {
 
     // Fetch related posts for sidebar
     const relatedRes = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000"}/api/user/posts?sort=-created_at&per_page=4`
+      `${process.env.NEXT_PUBLIC_API_BASE_URL || "https://moobeefsteak.online"}/api/user/posts?sort=-created_at&per_page=4`
     );
     const allPosts = relatedRes.data.data || [];
     const relatedPosts = allPosts

@@ -97,12 +97,12 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
 
   // Hàm xử lý đăng ký Google
   const handleGoogleRegister = () => {
-    window.location.href = `${process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000"}/api/auth/google/redirect`;
+    window.location.href = `${process.env.NEXT_PUBLIC_API_BASE_URL ?? "https://moobeefsteak.online"}/api/auth/google/redirect`;
   };
 
   // Hàm xử lý đăng ký Facebook
   const handleFacebookRegister = () => {
-    window.location.href = `${process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000"}/api/auth/facebook/redirect`;
+    window.location.href = `${process.env.NEXT_PUBLIC_API_BASE_URL ?? "https://moobeefsteak.online"}/api/auth/facebook/redirect`;
   };
 
   if (showVerificationMessage) {

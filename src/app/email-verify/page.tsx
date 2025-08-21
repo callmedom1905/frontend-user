@@ -23,7 +23,7 @@ export default function EmailVerifyPage() {
           return;
         }
 
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000"}/api/verify-email/${token}`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || "https://moobeefsteak.online"}/api/verify-email/${token}`, {
           method: "GET",
           credentials: "include",
         });
