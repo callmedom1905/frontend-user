@@ -157,6 +157,19 @@ export const Menu = () => {
             </div>
           </>
         )}
+        <>  <div className="flex flex-col items-center justify-center">
+            {!selectedCategory && (
+              <ProductGrid name="Combo" variant="square" products={limitedComboProducts} />
+            )}
+            {products.length > 0 && (
+              <ProductGrid 
+                name={selectedCategory ? `Danh mục (${products.length} sản phẩm)` : "Menu"} 
+                variant="horizontal" 
+                products={products}
+              />
+            )}
+            </div>
+          </>
       </main>
 
       {/* Nút giỏ hàng nổi - chỉ hiện khi có sản phẩm */}
