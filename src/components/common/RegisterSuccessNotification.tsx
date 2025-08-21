@@ -1,15 +1,10 @@
 "use client";
-import React, { useEffect } from "react";
+import React from "react";
 import { RegisterSuccessModal } from "./RegisterSuccessModal";
 import { useAuth } from "@/context/AuthContext";
 
 export const RegisterSuccessNotification: React.FC = () => {
   const { user, showRegisterSuccess, setShowRegisterSuccess } = useAuth();
-
-  useEffect(() => {
-    console.log("RegisterSuccessNotification - showRegisterSuccess:", showRegisterSuccess);
-    console.log("RegisterSuccessNotification - user:", user);
-  }, [showRegisterSuccess, user]);
 
   return (
     <RegisterSuccessModal
