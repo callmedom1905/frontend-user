@@ -6,10 +6,17 @@ import { useAuth } from "@/context/AuthContext";
 export const LoginSuccessNotification: React.FC = () => {
   const { user, showLoginSuccess, setShowLoginSuccess } = useAuth();
 
+  // useEffect(() => {
+  //   console.log("LoginSuccessNotification - showLoginSuccess:", showLoginSuccess);
+  //   console.log("LoginSuccessNotification - user:", user);
+  // }, [showLoginSuccess, user]);
+
   useEffect(() => {
-    console.log("LoginSuccessNotification - showLoginSuccess:", showLoginSuccess);
-    console.log("LoginSuccessNotification - user:", user);
-  }, [showLoginSuccess, user]);
+  if (showLoginSuccess && user) {
+    console.log("User logged in successfully:", user);
+  }
+}, [showLoginSuccess]);
+
 
   return (
     <LoginSuccessModal
