@@ -25,7 +25,6 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   // Hàm xử lý lưu vào localStorage và hiện pop-up
   const handleOrder = (product: { imageUrl: string; name: string; price: string }) => {
     const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-    // Convert price string to number for consistent storage
     const numericPrice = Number(product.price.replace(/[^\d]/g, '')) || 0;
     const existing = cart.find((item: CartItem) => item.name === product.name);
     if (existing) {
@@ -33,7 +32,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
     } else {
       cart.push({ 
         ...product, 
-        price: numericPrice, // Store as number
+        price: numericPrice, 
         quantity: 1 
       });
     }
@@ -53,7 +52,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
     return (
       <article className="flex overflow-hidden grow shrink items-start self-stretch my-auto bg-white rounded-xl min-w-60 w-[365px] max-md:max-w-full cursor-pointer">
         <img
-          src={imageUrl || '/images/placeholder-product.jpg'}
+          src={imageUrl}
           alt={name}
           className="object-contain shrink-0 aspect-[1.22] w-[205px]"
           onClick={handleCardClick}
@@ -91,11 +90,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   }
 
   return (
-    <article className="overflow-hidden self-stretch my-auto bg-white rounded-xl min-w-60 w-[340px] cursor-pointer" onClick={handleCardClick}>
+    <article className="overflow-hidden self-stretch my-auto bg-white rounded-xl min-w-60 w-[340px] cursor-pointer">
       <img
         src={imageUrl}
         alt={name}
         className="object-contain w-full aspect-square"
+        onClick={handleCardClick}
       />
       <div className="flex flex-col justify-center px-4 py-3">
         <div className="w-full text-lg font-medium leading-none">

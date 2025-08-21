@@ -187,7 +187,7 @@ export const CartActionButton: React.FC = () => {
                           <tr key={item.id || item.name + idx} className="border-t">
                             <td className="flex items-center gap-3 py-2">
 
-                              <img src={item.image || item.imageSrc} alt={item.name} className="w-16 h-16 lg:w-20 lg:h-20 rounded object-cover" />
+                              <img src={item.image || item.imageUrl} alt={item.name} className="w-16 h-16 lg:w-20 lg:h-20 rounded object-cover" />
                               <span className="font-bold text-black text-sm lg:text-base">{item.name}</span>
                             </td>
                             <td className="font-bold text-black text-sm lg:text-base">{getNumericPrice(item.price).toLocaleString()} đ</td>

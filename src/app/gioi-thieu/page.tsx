@@ -5,7 +5,7 @@ const Hero: React.FC = () => {
   return (
     <section className="mt-10 w-full max-w-[1420px] self-center max-md:max-w-full">
       <div className="my-auto w-[700px] min-w-60 self-stretch">
-        <h1 className="text-4xl font-black uppercase text-amber-400">
+        <h1 className="text-4xl font-black uppercase text-[#D4AF37]">
           Về chúng tôi
         </h1>
         <p className="mt-4 text-lg font-light text-black max-md:max-w-full">

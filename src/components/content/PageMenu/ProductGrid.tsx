@@ -13,6 +13,18 @@ interface ProductGridProps {
 
 export const ProductGrid: React.FC<ProductGridProps> = ({ name, variant = 'square', products }) => {
   const [localProducts, setLocalProducts] = useState<IProductProps[]>([]);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768); // md breakpoint
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   useEffect(() => {
     if (!products) {
@@ -51,14 +63,17 @@ export const ProductGrid: React.FC<ProductGridProps> = ({ name, variant = 'squar
   if (data.length === 0) {
     return null;
   }
-  console.log(data);
+
+  // Trên mobile, luôn sử dụng variant square
+  const displayVariant = isMobile ? 'square' : variant;
+
   return (
     <section className="flex flex-col justify-center self-center w-full max-w-[1420px] max-md:max-w-full">
       <h2 className="gap-2.5 self-stretch pt-10 w-full text-3xl font-bold leading-6 text-black whitespace-nowrap h-[70px] max-md:max-w-full">
         {name}
       </h2>
 
-      {variant === 'square' ? (
+      {displayVariant === 'square' ? (
         <div className="flex flex-wrap gap-5 items-center mt-5 ml-10 w-full text-center max-md:max-w-full">
           {data.map((product, index) => (
             <ProductCard

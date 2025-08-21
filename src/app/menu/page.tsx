@@ -15,7 +15,6 @@ export const Menu = () => {
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
-  // Debounce search term
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearchTerm(searchTerm);
@@ -72,7 +71,9 @@ export const Menu = () => {
   const handleSearch = useCallback((query: string) => {
     setSearchTerm(query);
     // Reset category khi tìm kiếm
-    setSelectedCategory(null);
+    if (query.trim()) {
+      setSelectedCategory(null);
+    }
   }, []);
 
   const handleCategorySelect = useCallback((categoryId: number | null) => {
@@ -81,14 +82,8 @@ export const Menu = () => {
     setSearchTerm('');
   }, []);
 
-  const handleCartClick = () => {
-    window.location.href = '/gio-hang';
-  };
-
   const comboProducts = products.filter(p => p.id_category === 6);
   const limitedComboProducts = comboProducts.slice(0, 8);
-  // const limitedMenuProducts = products.slice(0, 15);
-  // const limitedSearchProducts = products.slice(0, 16);
 
   return (
     <div className="flex overflow-hidden flex-col bg-stone-100">
@@ -119,21 +114,38 @@ export const Menu = () => {
 
       <main className="flex flex-col items-center justify-center">
         {loading ? (
-          <div className="text-center py-10 text-lg">
-            {debouncedSearchTerm.trim() ? 'Đang tìm kiếm...' : 'Đang tải sản phẩm...'}
+          <div className="text-center py-10">
+            <div className="text-lg mb-2">
+              {debouncedSearchTerm.trim() ? 'Đang tìm kiếm...' : 'Đang tải sản phẩm...'}
+            </div>
+            <div className="animate-spin w-6 h-6 border-2 border-[#D4AF37] border-t-transparent rounded-full mx-auto"></div>
           </div>
         ) : debouncedSearchTerm.trim() ? (
           // Hiển thị kết quả tìm kiếm
           <>
             {products.length > 0 ? (
               <ProductGrid 
-                name={`Kết quả tìm kiếm cho "${debouncedSearchTerm}"`} 
+                name={`Kết quả tìm kiếm cho "${debouncedSearchTerm}" (${products.length} sản phẩm)`} 
                 variant="horizontal" 
-                // products={limitedSearchProducts}
+                products={products}
               />
             ) : (
-              <div className="text-center py-10 text-lg text-black">
-                Không tìm thấy sản phẩm phù hợp với từ khóa "{debouncedSearchTerm}"
+              <div className="text-center py-10">
+                <div className="text-lg text-black mb-4">
+                  Không tìm thấy sản phẩm phù hợp với từ khóa &quot;{debouncedSearchTerm}&quot;
+                </div>
+                <div className="text-sm text-gray-600">
+                  Vui lòng thử với từ khóa khác hoặc xem menu đầy đủ
+                </div>
+                <button 
+                  onClick={() => {
+                    setSearchTerm('');
+                    setSelectedCategory(null);
+                  }}
+                  className="mt-4 px-4 py-2 bg-[#D4AF37] text-white rounded hover:bg-[#B8941F] transition-colors"
+                >
+                  Xem tất cả sản phẩm
+                </button>
               </div>
             )}
           </>

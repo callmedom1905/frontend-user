@@ -9,6 +9,21 @@ import { CartActionButton } from "@/components/content/PageCart/CartActionButton
 import apiClient from "@/lib/apiClient";
 import { useParams } from "next/navigation";
 
+interface Product {
+  id: number;
+  name: string;
+  price: number;
+  image: string;
+  slug: string;
+  description?: string;
+  id_category: number;
+  status: boolean;
+}
+
+interface CartItem extends Product {
+  quantity: number;
+}
+
 
 export const FormThucOn: React.FC = () => {
   const handleOrder = (product: {
@@ -26,23 +41,22 @@ export const FormThucOn: React.FC = () => {
     } else {
       cart.push({ 
         ...product, 
-        price: Number(product.price), // Ensure price is number
+        price: Number(product.price),
         quantity: 1 
       });
     }
     localStorage.setItem("cart", JSON.stringify(cart));
     window.dispatchEvent(new Event("cartUpdated"));
   };
-  const [hasCart, setHasCart] = useState(false);
   const [showCartPopup, setShowCartPopup] = useState(false);
-  const [cart, setCart] = useState<any[]>([]);
+  const [cart, setCart] = useState<CartItem[]>([]);
 
-  const [menuProducts, setMenuProducts] = useState<any[]>([]);
-  const [allProducts, setAllProducts] = useState<any[]>([]);
+  const [menuProducts, setMenuProducts] = useState<Product[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<number|null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
   const [loading, setLoading] = useState(false);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
 
   const params = useParams();
   const tablesId = params?.tablesId as string;
@@ -62,78 +76,74 @@ export const FormThucOn: React.FC = () => {
     if (cartData) {
       const parsed = JSON.parse(cartData);
       // Normalize cart data to ensure prices are numbers
-      const normalizedCart = parsed.map((item: any) => ({
+      const normalizedCart = parsed.map((item: CartItem) => ({
         ...item,
         price: Number(item.price) || 0
       }));
       setCart(normalizedCart);
-      setHasCart(normalizedCart.length > 0);
     } else {
       setCart([]);
-      setHasCart(false);
     }
 
-    // Fetch sản phẩm status = 1
-    const fetchProducts = async () => {
-      try {
-        const res = await apiClient.get("/users/product");
-        let data = res.data || [];
-        data = data.filter((item: any) => item.status === true);
-        setAllProducts(data); // Lưu tất cả sản phẩm
-        
-        // Hiển thị tất cả sản phẩm
-        setMenuProducts(data);
-      } catch (err) {
-        setAllProducts([]);
-        setMenuProducts([]);
-      }
-    };
-    fetchProducts();
+
   }, []);
 
-  // Search and category filtering logic
   useEffect(() => {
-    if (allProducts.length === 0) return;
-
-    const filterProducts = async () => {
+    const fetchInitialProducts = async () => {
       setLoading(true);
       try {
-        let filteredProducts = [...allProducts];
-
-        // Apply search filter
-        if (debouncedSearchTerm.trim()) {
-          const searchLower = debouncedSearchTerm.toLowerCase();
-          filteredProducts = filteredProducts.filter(product => 
-            product.name.toLowerCase().includes(searchLower) ||
-            product.description?.toLowerCase().includes(searchLower)
-          );
-        }
-
-        // Apply category filter
-        if (selectedCategory) {
-          filteredProducts = filteredProducts.filter(product => 
-            product.id_category === selectedCategory
-          );
-        }
-
-        if (debouncedSearchTerm.trim() || selectedCategory) {
-          // Show filtered results
-          setMenuProducts(filteredProducts);
-        } else {
-          // Show ALL products
-          setMenuProducts(allProducts);
-        }
+        const res = await apiClient.get('/users/product');
+        const data = res.data?.data || res.data || [];
+        const filteredData = data.filter((item: Product) => item.status === true);
+        setMenuProducts(filteredData);
       } catch (error) {
-        console.error('Error filtering products:', error);
+        console.error('Error fetching initial products:', error);
+        setMenuProducts([]);
+      } finally {
+        setLoading(false);
+        setIsInitialLoad(false);
+      }
+    };
+
+    fetchInitialProducts();
+  }, []);
+
+
+  useEffect(() => {
+    if (isInitialLoad) {
+      return;
+    }
+
+    const fetchProducts = async () => {
+      setLoading(true);
+      try {
+        let res;
+        
+        if (debouncedSearchTerm.trim()) {
+          // Tìm kiếm sản phẩm
+          res = await apiClient.get(`/users/product/search?query=${encodeURIComponent(debouncedSearchTerm.trim())}`);
+        } else if (selectedCategory) {
+          // Lấy sản phẩm theo danh mục
+          res = await apiClient.get(`/users/products/category/${selectedCategory}`);
+        } else {
+          // Lấy tất cả sản phẩm
+          res = await apiClient.get('/users/product');
+        }
+        
+        const data = res.data?.data || res.data || [];
+        const filteredData = data.filter((item: Product) => item.status === true);
+        setMenuProducts(filteredData);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+        setMenuProducts([]);
       } finally {
         setLoading(false);
       }
     };
 
-    filterProducts();
-  }, [debouncedSearchTerm, selectedCategory, allProducts]);
+    fetchProducts();
+  }, [debouncedSearchTerm, selectedCategory, isInitialLoad]);
 
-  // Lưu vào localStorage để các component khác dùng được
   useEffect(() => {
     if (tableIds.length > 0) {
       const bookingInfoStr = localStorage.getItem("bookingInfo");
@@ -150,23 +160,16 @@ export const FormThucOn: React.FC = () => {
     }
   }, [tablesId]);
 
-  const handleButtonClick = () => {
-    if (hasCart) {
-      setShowCartPopup(true);
-    } else {
-      window.location.href = "/thanh-toan"; // hoặc router.push nếu dùng Next.js router
-    }
-  };
 
-  // Search and category handlers
+
   const handleSearch = (query: string) => {
     setSearchTerm(query);
-    setSelectedCategory(null); // Reset category when searching
+    setSelectedCategory(null);
   };
 
   const handleCategorySelect = (categoryId: number | null) => {
     setSelectedCategory(categoryId);
-    setSearchTerm(''); // Reset search when selecting category
+    setSearchTerm('');
   };
 
 
@@ -177,7 +180,7 @@ export const FormThucOn: React.FC = () => {
         className="fixed right-8 z-50 max-md:bottom-2 max-md:right-2"
         style={{}}
       >
-        <CartActionButton hasCart={hasCart} onClick={handleButtonClick} />
+        <CartActionButton />
       </div>
       {showCartPopup && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
@@ -199,7 +202,7 @@ export const FormThucOn: React.FC = () => {
                 </tr>
               </thead>
               <tbody>
-                {cart.map((item, idx) => (
+                {cart.map((item) => (
                   <tr key={item.id} className="border-t">
                     <td className="flex items-center gap-3 py-2">
                       <img
@@ -302,8 +305,6 @@ export const FormThucOn: React.FC = () => {
         </div>
       )}
       <ProgressSteps />
-
-      {/* Search and Category Section */}
       <section className="flex ml-[210px] mr-[250px] z-10 items-center px-8 pt-6 pb-4 w-full bg-zinc-100 min-h-[142px] max-md:px-3 max-md:flex-col max-md:gap-3 max-sm:ml-4 max-sm:mr-4">
         <div className="flex-1 min-w-0">
           <div className="rounded p-2 h-full">
@@ -330,26 +331,45 @@ export const FormThucOn: React.FC = () => {
       <CategoryNav onCategorySelect={handleCategorySelect} />
 
       <main className="flex w-full max-w-[1670px] flex-wrap justify-between gap-5 self-end max-md:max-w-full">
-                  <div className="max-md:max-w-full">
+        <div className="max-md:max-w-full">
 
           <section className="flex w-full flex-col justify-center max-md:max-w-full">
             <h2 className="h-[70px] w-full gap-2.5 self-stretch whitespace-nowrap pt-10 text-3xl font-bold leading-6 text-black max-md:max-w-full">
-              Menu
+              {debouncedSearchTerm.trim() 
+                ? `Kết quả tìm kiếm cho "${debouncedSearchTerm}" (${menuProducts.length} sản phẩm)`
+                : selectedCategory 
+                ? `Danh mục (${menuProducts.length} sản phẩm)`
+                : 'Menu'
+              }
             </h2>
             {loading ? (
-              <div className="text-center py-10 text-lg text-black">
-                {debouncedSearchTerm.trim() ? 'Đang tìm kiếm...' : selectedCategory ? 'Đang tải danh mục...' : 'Đang tải sản phẩm...'}
+              <div className="text-center py-10">
+                <div className="text-lg text-black mb-2">
+                  {debouncedSearchTerm.trim() ? 'Đang tìm kiếm...' : selectedCategory ? 'Đang tải danh mục...' : 'Đang tải sản phẩm...'}
+                </div>
+                <div className="animate-spin w-6 h-6 border-2 border-[#D4AF37] border-t-transparent rounded-full mx-auto"></div>
               </div>
             ) : menuProducts.length === 0 && (debouncedSearchTerm.trim() || selectedCategory) ? (
-              <div className="text-center py-10 text-lg text-gray-500">
-                {selectedCategory ? 'Không có sản phẩm nào trong danh mục này' : 'Không tìm thấy món ăn nào'}
+              <div className="text-center py-10">
+                <div className="text-lg text-gray-500 mb-4">
+                  {selectedCategory ? 'Không có sản phẩm nào trong danh mục này' : 'Không tìm thấy món ăn nào'}
+                </div>
+                <button 
+                  onClick={() => {
+                    setSearchTerm('');
+                    setSelectedCategory(null);
+                  }}
+                  className="px-4 py-2 bg-[#D4AF37] text-white rounded hover:bg-[#B8941F] transition-colors"
+                >
+                  Xem tất cả sản phẩm
+                </button>
               </div>
             ) : menuProducts.length === 0 ? (
               <div className="text-center py-10 text-lg text-gray-500">
                 Chưa có sản phẩm nào
               </div>
             ) : (
-              <div className="mt-5 flex w-full items-center gap-5 text-center max-md:max-w-full">
+              <div className="mt-5 ml-[50px] flex w-full items-center gap-5 text-center max-md:max-w-full">
                 <div className="my-auto flex min-w-60 flex-wrap items-center gap-5 self-stretch max-md:max-w-full">
                   {menuProducts.map((product, idx) => (
                     <ProductCard

@@ -22,7 +22,6 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   // Hàm xử lý lưu vào localStorage và hiện pop-up
   const handleOrder = (product: { image: string; name: string; price: string }) => {
     const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-    // Convert price to number for proper calculation
     const numericPrice = Number(product.price.replace(/[^\d]/g, '')) || 0;
     const existing = cart.find((item: CartItem) => item.name === product.name);
     if (existing) {

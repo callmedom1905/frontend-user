@@ -12,6 +12,13 @@ interface SearchBarProps {
 export const SearchBar: React.FC<SearchBarProps> = ({ onSearch, value, onChange, loading = false }) => {
   const [searchTerm, setSearchTerm] = useState(value || '');
 
+  // Sync with parent value
+  React.useEffect(() => {
+    if (value !== undefined) {
+      setSearchTerm(value);
+    }
+  }, [value]);
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
     setSearchTerm(newValue);
@@ -41,6 +48,20 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSearch, value, onChange,
           disabled={loading}
           className="flex-1 shrink self-stretch my-auto text-sm sm:text-lg tracking-wide leading-none text-black basis-3 bg-transparent border-none outline-none disabled:opacity-50 placeholder:text-gray-400"
         />
+        {searchTerm && !loading && (
+          <button 
+            type="button"
+            onClick={() => {
+              setSearchTerm('');
+              onChange?.('');
+            }}
+            className="overflow-hidden self-stretch p-1 sm:p-1.5 my-auto w-6 sm:w-7 text-sm sm:text-lg font-medium leading-3 text-center whitespace-nowrap text-zinc-400 hover:text-zinc-600 transition-colors"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 sm:w-5 sm:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        )}
         <button 
           type="submit"
           disabled={loading}
