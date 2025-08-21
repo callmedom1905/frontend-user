@@ -3,8 +3,13 @@
 import React, { useEffect, useState } from 'react';
 import apiClient from '@/lib/apiClient';
 
+interface Category {
+  id: number;
+  name: string;
+}
+
 export const CategoryNav = ({ onCategorySelect }: { onCategorySelect: (categoryId: number|null) => void }) => {
-  const [categories, setCategories] = useState<any[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<number|null>(null);
 
   useEffect(() => {
@@ -28,7 +33,7 @@ export const CategoryNav = ({ onCategorySelect }: { onCategorySelect: (categoryI
   };
 
   return (
-    <nav className="flex overflow-hidden flex-col justify-center items-center px-16 py-px w-full text-lg text-center text-black whitespace-nowrap bg-[#E6C67A] border-white max-md:px-5 max-md:max-w-full">
+    <nav className="flex overflow-hidden flex-col justify-center items-center px-16 py-px w-full text-lg text-center text-black whitespace-nowrap bg-orange-300 border-white max-md:px-5 max-md:max-w-full">
       <div className="flex overflow-hidden flex-wrap justify-center items-center px-24 w-full max-w-[1420px] max-md:px-5 max-md:max-w-full">
         <div
           className={`flex-1 shrink gap-2.5 self-stretch px-2.5 py-3.5 my-auto basis-0 min-h-[50px] cursor-pointer rounded transition-colors duration-200 ${
@@ -40,7 +45,7 @@ export const CategoryNav = ({ onCategorySelect }: { onCategorySelect: (categoryI
         >
           Tất cả
         </div>
-        {categories.map((cat: any) => (
+        {categories.map((cat: Category) => (
           <div
             key={cat.id}
             className={`flex-1 shrink gap-2.5 self-stretch px-2.5 py-3.5 my-auto basis-0 min-h-[50px] cursor-pointer rounded transition-colors duration-200 ${
