@@ -252,7 +252,7 @@ export default async function PostDetail({ params }: PageProps) {
             {/* Featured image */}
             {post.image && (
               <div className="mb-8">
-                <Image
+                <img
                   src={post.image}
                   alt={post.title}
                   width={800}
