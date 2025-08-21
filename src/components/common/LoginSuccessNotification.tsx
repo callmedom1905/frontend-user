@@ -14,10 +14,6 @@ export const LoginSuccessNotification: React.FC = () => {
         setShowLoginSuccess(false);
       }}
       userName={user?.name || user?.full_name}
-      onContinue={() => {
-        console.log("Continue button clicked");
-        setShowLoginSuccess(false);
-      }}
     />
   );
 };

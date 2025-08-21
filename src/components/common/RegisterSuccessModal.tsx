@@ -6,14 +6,12 @@ interface RegisterSuccessModalProps {
   isOpen: boolean;
   onClose: () => void;
   userName?: string;
-  onContinue?: () => void;
 }
 
 export const RegisterSuccessModal: React.FC<RegisterSuccessModalProps> = ({
   isOpen,
   onClose,
-  userName,
-  onContinue
+  userName
 }) => {
   const registerIcon = (
     <div className="w-20 h-20 mx-auto bg-gradient-to-br from-green-400 via-green-500 to-emerald-600 rounded-full flex items-center justify-center shadow-lg">
@@ -40,9 +38,7 @@ export const RegisterSuccessModal: React.FC<RegisterSuccessModalProps> = ({
       onClose={onClose}
       title="Đăng ký thành công!"
       message={userName ? `Chào mừng ${userName} đến với Moo Beef Steak!` : "Chào mừng bạn đến với Moo Beef Steak!"}
-      buttonText="Khám phá ngay"
       icon={registerIcon}
-      onButtonClick={onContinue}
     />
   );
 };

@@ -6,14 +6,12 @@ interface LoginSuccessModalProps {
   isOpen: boolean;
   onClose: () => void;
   userName?: string;
-  onContinue?: () => void;
 }
 
 export const LoginSuccessModal: React.FC<LoginSuccessModalProps> = ({
   isOpen,
   onClose,
-  userName,
-  onContinue
+  userName
 }) => {
   const loginIcon = (
     <div className="w-20 h-20 mx-auto bg-gradient-to-br from-yellow-300 via-yellow-400 to-orange-400 rounded-full flex items-center justify-center shadow-lg">
@@ -40,9 +38,7 @@ export const LoginSuccessModal: React.FC<LoginSuccessModalProps> = ({
       onClose={onClose}
       title="Đăng nhập thành công!"
       message={userName ? `Chào mừng ${userName} đến với Moo Beef Steak!` : "Chào mừng bạn đến với Moo Beef Steak!"}
-      buttonText="Tiếp tục"
       icon={loginIcon}
-      onButtonClick={onContinue}
     />
   );
 };

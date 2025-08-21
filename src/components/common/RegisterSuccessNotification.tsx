@@ -14,10 +14,6 @@ export const RegisterSuccessNotification: React.FC = () => {
         setShowRegisterSuccess(false);
       }}
       userName={user?.name || user?.full_name}
-      onContinue={() => {
-        console.log("Continue button clicked");
-        setShowRegisterSuccess(false);
-      }}
     />
   );
 };
