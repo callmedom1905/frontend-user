@@ -2,7 +2,6 @@
 import React, { useEffect, useState } from "react";
 import { ProgressSteps } from "@/components/content/PageMeal/ProgressSteps";
 import { ProductCard } from "@/components/content/PageMeal/ProductCard";
-
 import { CategoryNav } from "@/components/content/PageMeal/CategoryNav";
 import { SearchBar } from "@/components/content/PageMeal/SearchNav";
 import { CartActionButton } from "@/components/content/PageCart/CartActionButton";

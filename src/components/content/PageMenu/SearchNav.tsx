@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 interface SearchBarProps {
   onSearch?: (query: string) => void;
@@ -13,7 +13,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSearch, value, onChange,
   const [searchTerm, setSearchTerm] = useState(value || '');
 
   // Sync with parent value
-  React.useEffect(() => {
+  useEffect(() => {
     if (value !== undefined) {
       setSearchTerm(value);
     }
@@ -22,18 +22,33 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSearch, value, onChange,
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
     setSearchTerm(newValue);
-    onChange?.(newValue);
+    onChange?.(newValue); // Chỉ cập nhật input value, không trigger search
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    // Chỉ trigger search khi submit form
     onSearch?.(searchTerm);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
+      e.preventDefault();
+      // Chỉ trigger search khi bấm Enter
       onSearch?.(searchTerm);
     }
+  };
+
+  const handleClear = () => {
+    setSearchTerm('');
+    onChange?.('');
+    // Clear search results
+    onSearch?.('');
+  };
+
+  const handleSearchClick = () => {
+    // Chỉ trigger search khi click nút search
+    onSearch?.(searchTerm);
   };
 
   return (
@@ -51,10 +66,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSearch, value, onChange,
         {searchTerm && !loading && (
           <button 
             type="button"
-            onClick={() => {
-              setSearchTerm('');
-              onChange?.('');
-            }}
+            onClick={handleClear}
             className="overflow-hidden self-stretch p-1 sm:p-1.5 my-auto w-6 sm:w-7 text-sm sm:text-lg font-medium leading-3 text-center whitespace-nowrap text-zinc-400 hover:text-zinc-600 transition-colors"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 sm:w-5 sm:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -64,6 +76,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSearch, value, onChange,
         )}
         <button 
           type="submit"
+          onClick={handleSearchClick}
           disabled={loading}
           className="overflow-hidden self-stretch p-1 sm:p-1.5 my-auto w-6 sm:w-7 text-sm sm:text-lg font-medium leading-3 text-center whitespace-nowrap text-zinc-700 hover:text-zinc-900 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >

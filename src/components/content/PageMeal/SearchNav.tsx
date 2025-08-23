@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 interface SearchBarProps {
   onSearch?: (query: string) => void;
@@ -12,21 +12,36 @@ interface SearchBarProps {
 export const SearchBar: React.FC<SearchBarProps> = ({ onSearch, value, onChange, loading = false }) => {
   const [searchTerm, setSearchTerm] = useState(value || '');
 
+  // Sync with parent value
+  useEffect(() => {
+    if (value !== undefined) {
+      setSearchTerm(value);
+    }
+  }, [value]);
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
     setSearchTerm(newValue);
-    onChange?.(newValue);
+    onChange?.(newValue); // Chỉ cập nhật input value, không trigger search
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    // Chỉ trigger search khi submit form
     onSearch?.(searchTerm);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
+      e.preventDefault();
+      // Chỉ trigger search khi bấm Enter
       onSearch?.(searchTerm);
     }
+  };
+
+  const handleSearchClick = () => {
+    // Chỉ trigger search khi click nút search
+    onSearch?.(searchTerm);
   };
 
   return (
@@ -43,6 +58,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSearch, value, onChange,
         />
         <button 
           type="submit"
+          onClick={handleSearchClick}
           disabled={loading}
           className="overflow-hidden self-stretch p-1 sm:p-1.5 my-auto w-6 sm:w-7 text-sm sm:text-lg font-medium leading-3 text-center whitespace-nowrap text-zinc-700 hover:text-zinc-900 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >

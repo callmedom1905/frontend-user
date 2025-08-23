@@ -7,21 +7,26 @@ import { ProductGrid } from '@/components/content/PageMenu/ProductGrid';
 import { CartActionButton } from '@/components/content/PageCart/CartActionButton';
 import apiClient from '@/lib/apiClient';
 
+interface Product {
+  id: number;
+  name: string;
+  price: number;
+  imageUrl: string;
+  slug: string;
+  description?: string;
+  meta_description?: string;
+  id_category: number;
+  status: boolean;
+  quantity_sold?: number;
+}
+
 export const Menu = () => {
   const [hasCart, setHasCart] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<number|null>(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
-  const [products, setProducts] = useState<any[]>([]);
+  const [activeSearchTerm, setActiveSearchTerm] = useState(''); // Chỉ thay đổi khi submit search
+  const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearchTerm(searchTerm);
-    }, 500); // 500ms delay
-
-    return () => clearTimeout(timer);
-  }, [searchTerm]);
 
   useEffect(() => {
     // Hàm kiểm tra giỏ hàng trong localStorage
@@ -47,9 +52,9 @@ export const Menu = () => {
       setLoading(true);
       try {
         let res;
-        if (debouncedSearchTerm.trim()) {
+        if (activeSearchTerm.trim()) {
           // Tìm kiếm sản phẩm
-          res = await apiClient.get(`/users/product/search?query=${encodeURIComponent(debouncedSearchTerm.trim())}`);
+          res = await apiClient.get(`/users/product/search?query=${encodeURIComponent(activeSearchTerm.trim())}`);
         } else if (selectedCategory) {
           // Lấy sản phẩm theo danh mục
           res = await apiClient.get(`/users/products/category/${selectedCategory}`);
@@ -57,7 +62,12 @@ export const Menu = () => {
           // Lấy tất cả sản phẩm
           res = await apiClient.get('/users/product');
         } 
-        setProducts(res.data?.data || res.data || []);
+        const rawProducts = res.data?.data || res.data || [];
+        const mappedProducts = rawProducts.map((product: { image?: string; [key: string]: any }) => ({
+          ...product,
+          imageUrl: product.image || ''
+        }));
+        setProducts(mappedProducts);
       } catch (error) {
         console.error('Lỗi khi tải sản phẩm:', error);
         setProducts([]);
@@ -66,10 +76,10 @@ export const Menu = () => {
       }
     };
     fetchProducts();
-  }, [selectedCategory, debouncedSearchTerm]);
+  }, [selectedCategory, activeSearchTerm]);
 
   const handleSearch = useCallback((query: string) => {
-    setSearchTerm(query);
+    setActiveSearchTerm(query); // Chỉ cập nhật khi submit search
     // Reset category khi tìm kiếm
     if (query.trim()) {
       setSelectedCategory(null);
@@ -80,6 +90,7 @@ export const Menu = () => {
     setSelectedCategory(categoryId);
     // Reset search khi chọn category
     setSearchTerm('');
+    setActiveSearchTerm('');
   }, []);
 
   const comboProducts = products.filter(p => p.id_category === 6);
@@ -116,23 +127,23 @@ export const Menu = () => {
         {loading ? (
           <div className="text-center py-10">
             <div className="text-lg mb-2">
-              {debouncedSearchTerm.trim() ? 'Đang tìm kiếm...' : 'Đang tải sản phẩm...'}
+              {activeSearchTerm.trim() ? 'Đang tìm kiếm...' : 'Đang tải sản phẩm...'}
             </div>
             <div className="animate-spin w-6 h-6 border-2 border-[#D4AF37] border-t-transparent rounded-full mx-auto"></div>
           </div>
-        ) : debouncedSearchTerm.trim() ? (
+        ) : activeSearchTerm.trim() ? (
           // Hiển thị kết quả tìm kiếm
           <>
             {products.length > 0 ? (
               <ProductGrid 
-                name={`Kết quả tìm kiếm cho "${debouncedSearchTerm}" (${products.length} sản phẩm)`} 
+                name={`Kết quả tìm kiếm cho "${activeSearchTerm}" (${products.length} sản phẩm)`} 
                 variant="horizontal" 
                 products={products}
               />
             ) : (
               <div className="text-center py-10">
                 <div className="text-lg text-black mb-4">
-                  Không tìm thấy sản phẩm phù hợp với từ khóa &quot;{debouncedSearchTerm}&quot;
+                  Không tìm thấy sản phẩm phù hợp với từ khóa &quot;{activeSearchTerm}&quot;
                 </div>
                 <div className="text-sm text-gray-600">
                   Vui lòng thử với từ khóa khác hoặc xem menu đầy đủ
@@ -140,6 +151,7 @@ export const Menu = () => {
                 <button 
                   onClick={() => {
                     setSearchTerm('');
+                    setActiveSearchTerm('');
                     setSelectedCategory(null);
                   }}
                   className="mt-4 px-4 py-2 bg-[#D4AF37] text-white rounded hover:bg-[#B8941F] transition-colors"
@@ -150,14 +162,8 @@ export const Menu = () => {
             )}
           </>
         ) : (
-          // Hiển thị menu bình thường
-          <>  <div className="flex flex-col items-center justify-center">
-            <ProductGrid name="Combo" variant="square" products={limitedComboProducts} />
-            <ProductGrid name="Menu" variant="horizontal"/>
-            </div>
-          </>
-        )}
-        <>  <div className="flex flex-col items-center justify-center">
+          <>  
+          <div className="flex flex-col items-center justify-center">
             {!selectedCategory && (
               <ProductGrid name="Combo" variant="square" products={limitedComboProducts} />
             )}
@@ -170,6 +176,7 @@ export const Menu = () => {
             )}
             </div>
           </>
+        )}
       </main>
 
       {/* Nút giỏ hàng nổi - chỉ hiện khi có sản phẩm */}
@@ -179,7 +186,6 @@ export const Menu = () => {
         </div>
       )}
 
-      {/* <Footer /> */}
     </div>
   );
 };
