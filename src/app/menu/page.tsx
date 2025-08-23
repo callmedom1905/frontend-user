@@ -98,7 +98,7 @@ export const Menu = () => {
 
   return (
     <div className="flex overflow-hidden flex-col bg-stone-100">
-      <section className="flex ml-[210px] mr-[250px] z-10 items-center px-8 pt-6 pb-4 w-full bg-zinc-100 min-h-[142px] max-md:px-3 max-md:flex-col max-md:gap-3 max-sm:ml-4 max-sm:mr-4">
+      <section className="flex ml-[210px] mr-[250px] z-10 px-8 pt-6 pb-4 w-full bg-zinc-100 min-h-[142px] max-md:px-3 max-md:flex-col max-md:gap-3 max-sm:ml-4 max-sm:mr-4">
         <div className="flex-1 min-w-0">
           <div className="rounded p-2 h-full">
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-[#D4AF37] uppercase">
