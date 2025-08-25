@@ -7,7 +7,7 @@ import apiClient from '@/lib/apiClient';
 
 interface ProductGridProps {
   name: string;
-  variant?: 'square' | 'horizontal';
+  variant?: 'square' | 'horizontal' | 'mobile';
   products?: IProductProps[];
 }
 
@@ -57,23 +57,36 @@ export const ProductGrid: React.FC<ProductGridProps> = ({ name, variant = 'squar
 
   const data = (products && products.length > 0 ? products : localProducts).map(product => ({
     ...product,
-    imageUrl: product.imageUrl || product.image || ''
+    imageUrl: product.imageUrl || ''
   }));
 
   if (data.length === 0) {
     return null;
   }
 
-  // Trên mobile, luôn sử dụng variant square
-  const displayVariant = isMobile ? 'square' : variant;
+  // Trên mobile, sử dụng variant mobile
+  const displayVariant = isMobile ? 'mobile' : variant;
 
   return (
     <section className="flex flex-col justify-center self-center w-full max-w-[1420px] max-md:max-w-full">
-      <h2 className="gap-2.5 self-stretch pt-10 w-full text-3xl font-bold leading-6 text-black whitespace-nowrap h-[70px] max-md:max-w-full">
+      <h2 className="gap-2.5 self-stretch pt-10 text-3xl font-bold leading-6 text-black whitespace-nowrap h-[70px] max-md:max-w-full">
         {name}
       </h2>
 
-      {displayVariant === 'square' ? (
+      {displayVariant === 'mobile' ? (
+        <div className="grid sm:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-6 mt-5 w-full">
+          {data.map((product, index) => (
+            <ProductCard
+              key={product.id || index}
+              imageUrl={product.imageUrl}
+              name={product.name}
+              price={`${Number(product.price).toLocaleString()} đ`}
+              variant="mobile"
+              slug={product.slug}
+            />
+          ))}
+        </div>
+      ) : displayVariant === 'square' ? (
         <div className="flex flex-wrap gap-5 items-center mt-5 ml-10 w-full text-center max-md:max-w-full">
           {data.map((product, index) => (
             <ProductCard

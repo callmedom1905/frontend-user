@@ -9,6 +9,7 @@ import { CartItem } from '@/types/cart';
 export const CartActionButton: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
   const [cart, setCart] = useState<CartItem[]>([]);
+  const [autoClearTimer, setAutoClearTimer] = useState<NodeJS.Timeout | null>(null);
 
   const getNumericPrice = (price: number | string): number => {
     if (typeof price === 'number') return price;
@@ -45,6 +46,50 @@ export const CartActionButton: React.FC = () => {
     return () => window.removeEventListener('cartUpdated', updateCount);
   }, []);
 
+  // Kiểm tra và khởi tạo auto-clear timer khi component mount
+  useEffect(() => {
+    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+    const cartCreationTime = localStorage.getItem('cartCreationTime');
+    
+    if (cart.length > 0) {
+      if (!cartCreationTime) {
+        // Nếu chưa có thời gian tạo, lưu thời gian hiện tại
+        saveCartCreationTime();
+        startAutoClearTimer();
+      } else {
+        // Kiểm tra xem đã quá 2 tiếng chưa
+        const creationTime = parseInt(cartCreationTime);
+        const currentTime = Date.now();
+        const timeDiff = currentTime - creationTime;
+        const twoHours = 2 * 60 * 60 * 1000; // 2 tiếng
+        
+        if (timeDiff >= twoHours) {
+          // Đã quá 2 tiếng, xóa giỏ hàng
+          localStorage.removeItem('cart');
+          localStorage.removeItem('cartCreationTime');
+          setCart([]);
+          window.dispatchEvent(new Event('cartUpdated'));
+        } else {
+          // Chưa quá 2 tiếng, set timer cho thời gian còn lại
+          const remainingTime = twoHours - timeDiff;
+          const timer = setTimeout(() => {
+            localStorage.removeItem('cart');
+            localStorage.removeItem('cartCreationTime');
+            setCart([]);
+            setShowModal(false);
+            window.dispatchEvent(new Event('cartUpdated'));
+          }, remainingTime);
+          setAutoClearTimer(timer);
+        }
+      }
+    }
+
+    // Cleanup timer khi component unmount
+    return () => {
+      clearAutoClearTimer();
+    };
+  }, []);
+
   const handleClick = () => {
     setShowModal(true);
   };
@@ -76,11 +121,53 @@ export const CartActionButton: React.FC = () => {
   const updateCart = (updated: CartItem[]) => {
     setCart(updated);
     if (updated.length === 0) {
+      clearAutoClearTimer(); // Xóa timer khi giỏ hàng trống
       localStorage.removeItem('cart'); // Xóa đơn hàng nếu không còn món
+      localStorage.removeItem('cartCreationTime');
       setShowModal(false);
     } else {
       localStorage.setItem('cart', JSON.stringify(updated));
+      // Reset timer khi có sản phẩm mới
+      saveCartCreationTime();
+      startAutoClearTimer();
     }
+    window.dispatchEvent(new Event('cartUpdated'));
+  };
+
+  // Function để lưu thời gian tạo giỏ hàng
+  const saveCartCreationTime = () => {
+    localStorage.setItem('cartCreationTime', Date.now().toString());
+  };
+
+  // Function để xóa timer cũ
+  const clearAutoClearTimer = () => {
+    if (autoClearTimer) {
+      clearTimeout(autoClearTimer);
+      setAutoClearTimer(null);
+    }
+  };
+
+  // Function để set timer tự động xóa sau 2 tiếng
+  const startAutoClearTimer = () => {
+    clearAutoClearTimer(); // Xóa timer cũ nếu có
+    const timer = setTimeout(() => {
+      // Tự động xóa giỏ hàng sau 2 tiếng
+      localStorage.removeItem('cart');
+      localStorage.removeItem('cartCreationTime');
+      setCart([]);
+      setShowModal(false);
+      window.dispatchEvent(new Event('cartUpdated'));
+    }, 2 * 60 * 60 * 1000); // 2 tiếng = 2 * 60 * 60 * 1000 ms
+    
+    setAutoClearTimer(timer);
+  };
+
+  const clearAllItems = () => {
+    clearAutoClearTimer(); // Xóa timer khi xóa thủ công
+    localStorage.removeItem('cartCreationTime');
+    setCart([]);
+    localStorage.removeItem('cart');
+    setShowModal(false);
     window.dispatchEvent(new Event('cartUpdated'));
   };
 
@@ -187,7 +274,8 @@ export const CartActionButton: React.FC = () => {
                           <tr key={item.id || item.name + idx} className="border-t">
                             <td className="flex items-center gap-3 py-2">
 
-                              <img src={item.image || item.imageUrl} alt={item.name} className="w-16 h-16 lg:w-20 lg:h-20 rounded object-cover" />
+                              <img 
+                              src={item.image || item.imageUrl} alt={item.name} className="w-16 h-16 lg:w-20 lg:h-20 rounded object-cover" />
                               <span className="font-bold text-black text-sm lg:text-base">{item.name}</span>
                             </td>
                             <td className="font-bold text-black text-sm lg:text-base">{getNumericPrice(item.price).toLocaleString()} đ</td>
@@ -279,14 +367,23 @@ export const CartActionButton: React.FC = () => {
                     <span className="text-sm sm:text-base">Cọc trước 30% </span>
                     <span className="font-bold text-lg sm:text-xl">{Math.round(cart.reduce((sum, item) => sum + (getNumericPrice(item.price) * item.quantity), 0) * 0.3).toLocaleString()} đ</span>
                   </div>
+                  <div className="flex">
+                  <button
+                    onClick={clearAllItems}
+                    className="w-full text-red-500 border-2 border-red-500 py-1 sm:py-3 mr-1 rounded-[8px] text-base sm:text-lg font-bold"
+                  >
+                    Xóa tất cả
+                  </button>
                   <button
                     onClick={handleBooking}
-                    className="w-full bg-[#4B2E23] text-white py-2 sm:py-3 rounded-[8px] text-base sm:text-lg font-bold"
+                    className="w-full bg-[#4B2E23] text-white py-1 sm:py-3 rounded-[8px] text-base sm:text-lg font-bold"
                   >
                     Đặt bàn
                   </button>
+                  </div>
                 </div>
               </>
+              
             )}
           </div>
         </div>

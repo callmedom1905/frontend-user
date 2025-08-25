@@ -60,7 +60,7 @@ export const ProgressSteps: React.FC = () => {
       {/* Header với nút quay lại */}
       <div className="flex items-center justify-between mb-6">
         <button
-          className="flex items-center gap-2 px-4 py-2 text-gray-700 font-semibold text-sm md:text-base transition-all duration-200 hover:bg-orange-100 rounded-lg"
+          className="flex items-center gap-2 px-4 py-2 text-gray-700 font-semibold text-sm md:text-base transition-all duration-200 rounded-lg"
           onClick={handleBack}
         >
           <svg width="20" height="20" fill="none" className="md:w-6 md:h-6">
