@@ -237,10 +237,10 @@ export default async function PostDetail({ params }: PageProps) {
               <h2 className="font-bold text-lg md:text-xl mb-4 md:mb-6 text-gray-900">Tin mới lên</h2>
               <div className="flex flex-col gap-4">
                 {relatedPosts.length > 0 ? (
-                  relatedPosts.map((item: Post, idx: number) => (
+                  relatedPosts.map((item: Post) => (
                     <a 
                       key={item.id} 
-                      href={`/tin-tuc/${item.id}`}
+                      href={`/tin-tuc/${item.slug}`}
                       className="flex flex-col md:flex-row bg-white rounded-[7px] overflow-hidden shadow-sm transition-shadow"
                     >
                       <div className="flex-1 p-3 md:p-4 flex flex-col justify-center">
