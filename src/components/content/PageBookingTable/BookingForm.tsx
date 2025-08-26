@@ -487,7 +487,7 @@ export const BookingForm: React.FC = () => {
               </div>
             </div>
             {/* Nút AI gợi ý bàn thông minh */} 
-            {isLoggedIn && (
+            {/* {isLoggedIn && (
               <div className="self-stretch my-auto min-w-60 w-[254px] flex flex-col items-center justify-center max-md:w-full">
                 <button
                   type="button"
@@ -505,7 +505,7 @@ export const BookingForm: React.FC = () => {
                   {suggestedTables && suggestedTables.length > 0 ? 'Quay lại danh sách bàn' : 'Gợi ý bàn thông minh'}
                 </button>
               </div>
-            )}
+            )} */}
           </div>
         </section>
         <section className="flex flex-col justify-center px-12 py-3 w-full max-w-[940px] max-md:px-5 max-md:max-w-full">

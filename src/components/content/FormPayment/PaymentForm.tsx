@@ -2030,11 +2030,11 @@ export const PaymentForm: React.FC = () => {
                   )}
                 <div className="mb-3 flex items-center gap-6 text-gray-500">
                   <img
-                    src="https://upload.wikimedia.org/wikipedia/commons/b/b5/sepay.svg"
+                    src="https://sepay.vn/assets/img/logo/sepay-820x820-blue-icon.png"
                     alt="sepay"
                     className=" h-8 w-8 text-gray-500"
                   />
-                  <img
+                  {/* <img
                     src="https://upload.wikimedia.org/wikipedia/commons/0/04/Mastercard-logo.png"
                     alt="Mastercard"
                     className="h-8 w-8"
@@ -2048,7 +2048,7 @@ export const PaymentForm: React.FC = () => {
                     src="https://upload.wikimedia.org/wikipedia/commons/8/8a/VNPay_logo.svg"
                     alt="VNPay"
                     className="h-8 w-8"
-                  />
+                  /> */}
                 </div>
                 <select
                   name="payment"
