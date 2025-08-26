@@ -58,7 +58,7 @@ interface PageProps {
 async function fetchPost(slug: string): Promise<Post> {
   try {
     const res = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000"}/api/user/posts/${slug}`
+      `${process.env.NEXT_PUBLIC_API_BASE_URL || "https://moobeefsteak.onlinehttps://moobeefsteak.online"}/api/user/posts/${slug}`
     );
     
     const post: Post = res.data.data;
