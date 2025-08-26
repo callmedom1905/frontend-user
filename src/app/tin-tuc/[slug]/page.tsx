@@ -79,7 +79,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const resolvedParams = await params;
     const post = await fetchPost(resolvedParams.slug);
     
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://yourdomain.com";
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://moobeefsteak.online";
     const postUrl = `${siteUrl}/tin-tuc/${post.slug || post.id}`;
     
     return {
