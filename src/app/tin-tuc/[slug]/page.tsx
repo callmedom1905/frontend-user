@@ -1,4 +1,4 @@
-import Image from "next/image";
+
 import axios from "axios";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
@@ -152,7 +152,7 @@ export default async function PostDetail({ params }: PageProps) {
 
     // Fetch related posts for sidebar
     const relatedRes = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000"}/api/user/posts?sort=-created_at&per_page=4`
+      `${process.env.NEXT_PUBLIC_API_BASE_URL || "https://moobeefsteak.online"}/api/user/posts?sort=-created_at&per_page=4`
     );
     const allPosts = relatedRes.data.data || [];
     const relatedPosts = allPosts
@@ -212,7 +212,7 @@ export default async function PostDetail({ params }: PageProps) {
             {/* Featured image */}
             {post.image && (
               <div className="mb-6 md:mb-8">
-                <Image
+                <img
                   src={post.image}
                   alt={post.title}
                   width={800}
