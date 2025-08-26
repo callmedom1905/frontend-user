@@ -58,7 +58,7 @@ interface PageProps {
 async function fetchPost(slug: string): Promise<Post> {
   try {
     const res = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL || "https://moobeefsteak.online"}/api/user/posts/${slug}`
+      `${process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000"}/api/user/posts/${slug}`
     );
     
     const post: Post = res.data.data;
@@ -152,7 +152,7 @@ export default async function PostDetail({ params }: PageProps) {
 
     // Fetch related posts for sidebar
     const relatedRes = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL || "https://moobeefsteak.online"}/api/user/posts?sort=-created_at&per_page=4`
+      `${process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000"}/api/user/posts?sort=-created_at&per_page=4`
     );
     const allPosts = relatedRes.data.data || [];
     const relatedPosts = allPosts
@@ -181,126 +181,69 @@ export default async function PostDetail({ params }: PageProps) {
     });
 
     return (
-      <div className="flex justify-center bg-stone-100 min-h-screen py-8 px-2">
+      <div className="flex flex-col items-center bg-stone-100 min-h-screen py-4 px-2 md:py-8 md:px-4">
         {/* SEO Structured Data */}
         <ArticleStructuredData post={post} />
         <BreadcrumbStructuredData post={post} />
-        
+
         {/* Voucher Claim Button - kiểm tra trước khi hiển thị */}
         <VoucherWrapper 
           voucher={post.voucher} 
           postTitle={post.title}
         />
-        
+
         {/* Main content */}
-        <div className="flex w-[1400px] gap-8">
+        <div className="flex flex-col w-full max-w-[1400px] gap-8 md:flex-row">
           {/* Left: Post content */}
-          <div className="rounded-xl flex-none" style={{ width: 940 }}>
+          <div className="rounded-xl w-full md:w-[940px] md:flex-none">
             {/* Breadcrumb */}
-            <nav className="text-sm text-gray-500 mb-6">
+            <nav className="text-sm text-gray-500 mb-4 md:mb-6">
               <a href="/tin-tuc" className="hover:text-blue-600">Tin tức</a>
               <span className="mx-2">/</span>
               <span className="text-gray-700">{post.title}</span>
             </nav>
 
             {/* Post header */}
-            <div className="mb-6">
-              <h1 className="text-3xl font-bold mb-4 text-gray-900">{post.title}</h1>
-              
-              {/* Voucher Badge - hiện trong content nếu có voucher */}
-              {/* {hasActiveVoucher && (
-                <div className="mb-4 p-3 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-lg">
-                  <div className="flex items-center gap-2">
-                    <span className="text-amber-600">🎁</span>
-                    <span className="text-sm font-medium text-amber-800">
-                      Bài viết này có voucher miễn phí! Đọc đến cuối để nhận voucher 
-                      <strong className="text-amber-900">
-                        {post.voucher!.discount_type === 1 
-                          ? `${post.voucher!.discount_value}%`  // Type 1: Phần trăm
-                          : `${post.voucher!.discount_value.toLocaleString()}đ`  // Type 2: Số tiền VND
-                        }
-                      </strong>
-                    </span>
-                  </div>
-                </div>
-              )} */}
-
-              {/* <div className="flex items-center gap-4 text-sm text-gray-600 mb-4">
-                <span>📅 {formatDate(post.created_at)}</span>
-                {post.reading_time && (
-                  <>
-                    <span>•</span>
-                    <span>⏱️ {post.reading_time} phút đọc</span>
-                  </>
-                )}
-                {post.word_count && (
-                  <>
-                    <span>•</span>
-                    <span>📝 {post.word_count} từ</span>
-                  </>
-                )}
-                {post.user && (
-                  <>
-                    <span>•</span>
-                    <span>👤 {post.user.name}</span>
-                  </>
-                )}
-              </div> */}
-              <p className="text-lg text-gray-700 leading-relaxed">{post.description}</p>
+            <div className="mb-4 md:mb-6">
+              <h1 className="text-2xl md:text-3xl font-bold mb-3 md:mb-4 text-gray-900">{post.title}</h1>
+              <p className="text-base md:text-lg text-gray-700 leading-relaxed">{post.description}</p>
             </div>
 
             {/* Featured image */}
             {post.image && (
-              <div className="mb-8">
-                <img
+              <div className="mb-6 md:mb-8">
+                <Image
                   src={post.image}
                   alt={post.title}
                   width={800}
                   height={400}
-                  className="rounded-lg object-cover w-full h-80"
+                  className="rounded-lg object-cover w-full h-56 md:h-80"
                 />
               </div>
             )}
 
             {/* Post content */}
-            <div className="prose prose-lg max-w-none">
+            <div className="prose prose-base md:prose-lg max-w-none">
               <div 
                 className="text-base leading-7 text-gray-700"
                 dangerouslySetInnerHTML={{ __html: post.content }}
               />
             </div>
-
-            {/* Voucher CTA at end of content */}
-            {/* {hasActiveVoucher && (
-              <div className="mt-8 p-6 bg-gradient-to-r from-amber-500 to-orange-500 rounded-2xl text-white text-center">
-                <div className="text-2xl mb-2">🎉</div>
-                <h3 className="text-xl font-bold mb-2">Cảm ơn bạn đã đọc hết bài viết!</h3>
-                <p className="mb-4 opacity-90">
-                  Nhận ngay voucher giảm giá {post.voucher!.discount_type === 1 
-                    ? `${post.voucher!.discount_value}%`  // Type 1: Phần trăm
-                    : `${post.voucher!.discount_value.toLocaleString()}đ`  // Type 2: Số tiền VND
-                  } từ chúng tôi
-                </p>
-                <div className="text-sm opacity-75">
-                  Voucher sẽ xuất hiện ở góc màn hình →
-                </div>
-              </div>
-            )} */}
           </div>
 
           {/* Right: Related posts sidebar */}
-          <div className="w-[460px] flex-none">
-            <div className="rounded-xl p-6">
-              <h2 className="font-bold text-xl mb-6 text-gray-900">Tin mới lên</h2>
+          <div className="w-full md:w-[460px] md:flex-none">
+            <div className="rounded-xl p-4 md:p-6">
+              <h2 className="font-bold text-lg md:text-xl mb-4 md:mb-6 text-gray-900">Tin mới lên</h2>
               <div className="flex flex-col gap-4">
                 {relatedPosts.length > 0 ? (
                   relatedPosts.map((item: Post, idx: number) => (
                     <a 
                       key={item.id} 
                       href={`/tin-tuc/${item.id}`}
-                      className="flex bg-white rounded-[7px] overflow-hidden shadow-sm transition-shadow"
+                      className="flex flex-col md:flex-row bg-white rounded-[7px] overflow-hidden shadow-sm transition-shadow"
                     >
-                      <div className="flex-1 p-4 flex flex-col justify-center">
+                      <div className="flex-1 p-3 md:p-4 flex flex-col justify-center">
                         <div className="font-medium text-base line-clamp-3 text-gray-900 hover:text-blue-600 transition-colors">
                           {item.title}
                           {/* Badge for posts with vouchers */}
@@ -318,7 +261,7 @@ export default async function PostDetail({ params }: PageProps) {
                         </div>
                       </div>
                       {item.image && (
-                        <div className="w-32 flex-shrink-0 h-full p-4">
+                        <div className="w-full md:w-32 flex-shrink-0 h-32 md:h-full p-3 md:p-4">
                           <img
                             src={item.image}
                             alt={item.title}
