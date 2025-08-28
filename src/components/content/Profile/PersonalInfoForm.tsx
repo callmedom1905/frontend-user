@@ -1,6 +1,6 @@
 "use client";
 import * as React from "react";
-import { PasswordUpdateForm } from "./PasswordUpdateForm";
+// import { PasswordUpdateForm } from "./PasswordUpdateForm";
 import Cookies from "js-cookie";
 
 export const PersonalInfoForm = () => {
@@ -29,9 +29,9 @@ export const PersonalInfoForm = () => {
           className="object-contain w-full rounded-xl aspect-square"
           alt="Profile avatar"
         />
-        <button className="gap-2.5 self-center px-7 py-2.5 mt-2.5 rounded bg-stone-800 max-md:px-5">
+        {/* <button className="gap-2.5 self-center px-7 py-2.5 mt-2.5 rounded bg-stone-800 max-md:px-5">
           Sửa ảnh
-        </button>
+        </button> */}
       </div>
       <div className="flex flex-col grow shrink justify-center text-2xl font-black min-w-60 w-[976px] max-md:max-w-full">
         <h2 className="self-start text-amber-400 uppercase">
@@ -75,14 +75,14 @@ export const PersonalInfoForm = () => {
               />
             </div>
           </div>
-          <button
+          {/* <button
             type="submit"
             className="gap-2.5 self-start px-7 py-1.5 mt-5 text-sm leading-6 text-center text-yellow-50 rounded bg-stone-800 max-md:px-5"
           >
             Cập nhật thông tin
-          </button>
+          </button> */}
         </form>
-        <PasswordUpdateForm />
+        {/* <PasswordUpdateForm /> */}
       </div>
     </section>
   );

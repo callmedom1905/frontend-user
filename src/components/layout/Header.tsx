@@ -13,7 +13,7 @@ export const Header: React.FC = () => {
   const { user, logout } = useAuth();
 
   const handleProfile = () => {
-    router.push("/history");
+    router.push("/profile");
     setDropdownOpen(false);
   };
 
