@@ -31,7 +31,7 @@ export default function AuthCallback() {
         }
         
         // Redirect về trang chủ
-        router.push('/');
+        router.replace('/');
       } catch (error) {
         console.error('Error processing auth callback:', error);
         router.push('/login?error=auth_failed');
@@ -40,7 +40,7 @@ export default function AuthCallback() {
       // Nếu không có token, redirect về trang đăng nhập
       router.push('/login?error=no_token');
     }
-  }, [searchParams, router, triggerLoginSuccess, triggerRegisterSuccess]);
+  }, []);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
