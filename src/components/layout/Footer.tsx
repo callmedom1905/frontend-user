@@ -22,7 +22,7 @@ export const Footer: React.FC = () => {
           </div>
 
           <nav className="ml-5 w-[16%] max-md:ml-0 max-md:w-full">
-            <div className="flex overflow-hidden flex-col justify-center items-center pl-[85px] py-8 w-full text-lg text-center text-white max-md:mt-5">
+            <div className="flex overflow-hidden flex-col justify-center items-center pl-[65px] py-8 w-full text-lg text-center text-white max-md:mt-5">
               <a href="/" className="gap-2.5 self-stretch px-2.5 py-3.5 max-w-full text-orange-300 border-b-2 border-orange-300 min-h-[50px] w-[220px]">
                 Trang chủ
               </a>
@@ -45,7 +45,7 @@ export const Footer: React.FC = () => {
           </nav>
 
           <div className="ml-5 w-3/12 max-md:ml-0 max-md:w-full">
-            <div className="flex overflow-hidden flex-col justify-center items-center pl-[85px] py-28 w-full text-lg text-center text-white min-h-[364px] max-md:py-24 max-md:mt-5">
+            <div className="flex overflow-hidden flex-col justify-center items-center pl-[65px] py-28 w-full text-lg text-center text-white min-h-[364px] max-md:py-24 max-md:mt-5">
               <p className="gap-2.5 self-stretch px-2.5 py-3.5 max-w-full min-h-[50px] w-[220px]">
                 Hotline:{" "}
                 <span className="text-[rgba(230,198,122,1)]">1900636323</span>
